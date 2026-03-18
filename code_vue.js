@@ -273,7 +273,7 @@ const rootApp = createApp({
 
       // reflect to packageData
       installedPackage.data.forEach((set, key) => {
-        const target = packageDataMap.get(key);
+        const target = packageDataMap.value.get(key);
         target.forEach(dic => {
           if (set.has(dic.name)) return;
           dic.uninstalled = true;
