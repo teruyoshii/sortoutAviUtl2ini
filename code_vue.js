@@ -220,6 +220,8 @@ const rootApp = createApp({
       const files = e.currentTarget.files;
       if (!files) return;
 
+      installedPackage.loaded = true;
+      
       // initialize
       installedPackage.data.values().forEach(set=>set.clear());
 
