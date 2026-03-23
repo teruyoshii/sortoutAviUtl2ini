@@ -229,8 +229,12 @@ export default {
       if (!props.accessKeyMap) return false;
       const key = props.accessKeyMap.get(model.name)?.accessKey;
       if (!key) return false;
+      // 自身が非表示設定なら衝突なし
+      if (model.props?.hide) return false;
       return props.parentArray.some(sibling =>
         sibling !== model &&
+        // 非表示設定の兄弟はポップアップに出ないので除外
+        !sibling.props?.hide &&
         props.accessKeyMap.get(sibling.name)?.accessKey === key
       );
     }
