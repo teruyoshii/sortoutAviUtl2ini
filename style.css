@@ -595,11 +595,14 @@
   }
 
   .setting-div {
-    margin-block: 1rem;
     display: grid;
     align-items: center;
     grid-template-columns: max-content auto;
-    gap: 1rem;
+    gap: 0rem 1rem;
+
+    > :nth-child(even) {
+      line-height: 1;
+    }
 
     > :nth-child(odd) {
       color: white;

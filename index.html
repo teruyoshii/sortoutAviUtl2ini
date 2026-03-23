@@ -35,24 +35,26 @@
 
       <div :data-process="setting.process">
         <div v-if="setting.process==='home'">
-          <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-block-end:1.5rem;align-items:center;">
-            <button class="round blue" @click="clickNextInput">aviutl2.iniを読み込む</button>
-            <input type="file" id="iniInput" accept=".ini" style="display: none;" @change="readIniFile">
-            <button class="round blue" @click="saveIniFile">iniファイルを保存</button>
-            <button class="round" @click="resetPackageData">読み込み時の設定に戻す</button>
-            <button class="round" @click="clear">クリア</button>
-            <hr style="border:none;border-left:1px solid gray;">
-            <button class=" round blue" @click="clickNextInput">aul2ファイルを読み込む</button>
-            <input type="file" id="aul2Input" accept=".aul2" style="display: none;" @change="readAul2File">
-            <button class="round blue" @click="saveAul2File">aul2ファイルを保存</button>
-            <hr style="border:none;border-left:1px solid gray;">
-            <button class="link" command="show-modal" commandfor="modal">使い方</button>
-            <a href="https://github.com/seilor0/sortoutAviUtl2ini" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <div style="margin-block-end:1.5rem;">
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-block-end:0.5rem;align-items:center;">
+              <button class="round blue" @click="clickNextInput">iniファイルを読み込む</button>
+              <input type="file" id="iniInput" accept=".ini" style="display: none;" @change="readIniFile">
+              <button class="round blue" @click="saveIniFile">iniファイルを保存</button>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-block-end:0.5rem;align-items:center;">
+              <button class=" round blue" @click="clickNextInput">aul2ファイルを読み込む</button>
+              <input type="file" id="aul2Input" accept=".aul2" style="display: none;" @change="readAul2File">
+              <button class="round blue" @click="saveAul2File">aul2ファイルを保存</button>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-block-end:0.5rem;align-items:center;">
+              <button class="round" @click="resetPackageData">読み込み時の設定に戻す</button>
+              <button class="round" @click="clear">クリア</button>
+            </div>
           </div>
-
-          以下の2つのことが手軽にできるサイトです。
+          以下の3つのことが手軽にできるサイトです。
           <ul>
             <li>スクリプト・フォント・色のラベル分け</li>
+            <li>アクセスキーの割り当て</li>
             <li>アンインストール済みスクリプトの設定の一括削除</li>
           </ul>
 
@@ -64,22 +66,116 @@
                 ※「アプリケーションデータ」フォルダはAviUtl2の<code>「その他」メニュー > 「アプリケーションデータ」 > 「アプリケーションデータフォルダ」</code>から開くことができます
               </span>
             </li>
+            <li>
+              「アプリケーション データ」フォルダ内の「Language」にある<code>日本語(アクセスキー付き).aul2</code>を読み込む<br>
+              <span class="annotation">
+                ※日本語(アクセスキー付き).aul2をまだ導入していない場合は<a
+                  href="https://github.com/Garech-mas/jp_akey.aul2">こちらからダウンロード</a>して配置してください
+              </span>
+            </li>
             <li>各種変更する</li>
             <li>「iniファイルを保存」ボタンから、1.と同じ<code>aviutl2.ini</code>を上書き保存する</li>
+            <li>「aul2ファイルを保存」ボタンから、2.と同じ<code>日本語(アクセスキー付き).aul2</code>を上書き保存する</li>
           </ol>
-          <p class="annotation">
-            ※各種変更のやり方の詳細は、画面左上の「
-            <span style="color: var(--blue);cursor: pointer;"
-              onclick="document.getElementById('modal').showModal()">使い方</span>
-            」を見てください
-          </p>
-
-          <h3>！注意！</h3>
           <p>
             予期せぬ不具合により、今までカスタマイズしたAviUtl2の設定が壊れる可能性があります。<br>
-            <span class="annotation">※「3. aviutl2.iniを上書き保存」をしない限りは大丈夫です。</span><br>
+            <span class="annotation">※「4. aviutl2.iniを上書き保存」、「5. aul2ファイルを上書き保存」をしない限りは大丈夫です。</span><br>
 
             必ず<mark>aviutl2.iniのバックアップを取ってから</mark>当サイトを使用することを推奨します。
+          </p>
+          <h4>ラベル分けタブの使い方</h4>
+          <div class="setting-div">
+            <span>並び替え</span>
+            <div>
+              <p>
+                パッケージ/グループを、挿入したい箇所か
+                <span class="drop-area" style="padding: 2px 12px;margin-inline: 4px;display: inline;">全体の先頭</span>にD&D
+              </p>
+              <p class="annotation"><code>ctrl+クリック/ドラッグ</code> … 複数選択</p>
+            </div>
+
+            <span>アクセスキーの割り当て</span>
+            <div>
+              <p>パッケージ/グループ名の右側にある入力ボックスにアクセスキーを入力</p>
+              <p class="annotation">(rootも含む)同じグループ内で重複するアクセスキーがある場合は入力ボックスが<span
+                  style="padding: 0 2px;border-radius: 4px;background-color: lightpink;">赤い色</span>になります</p>
+            </div>
+            <span>グループ追加</span>
+            <div style="display: flex;align-items: center;gap: 0.5rem;">
+              <span class="mark">
+                <span class="material-symbols-outlined">create_new_folder</span>
+                New Group
+              </span>
+              <p>
+                を挿入したい箇所にD&D
+              </p>
+            </div>
+
+            <span>グループ名の変更</span>
+            <p>グループのタイトル部分にテキスト入力</p>
+
+            <span>ソート</span>
+            <div>
+              <P style="display: flex;line-height: 2;align-items: center;">
+                グループ右上の
+                <span class="material-symbols-outlined"
+                  style="color: darkgoldenrod;font-variation-settings: &quot;wght&quot; 500;padding-inline: 0.25rem;">sort</span>
+                ボタン
+              </P>
+              <p class="annotation"><code>alt+クリック</code> … 子孫グループ内のパッケージも一緒にソート</p>
+            </div>
+            <span>グループ解除</span>
+            <div>
+              <p>
+                グループ右上の<span class="icon icon-close"
+                  style="--size: 14px;color: darkgoldenrod;display: inline-block;padding: 0 0.5rem;--line-radius: 1.5px;"></span>ボタン
+              </p>
+              <p class="annotation">※内部のパッケージ/グループはその場に展開されます</p>
+            </div>
+
+            <span>グループ開閉</span>
+            <div>
+              <p>
+                グループ左上の<span style="color: darkgoldenrod"> ▼ </span>ボタン
+              </p>
+              <p class="annotation" style="line-height: 2;">
+                <code>alt+クリック</code> ... グループ内の全グループも一緒に開閉<br>
+                <code>shift+クリック</code> ... 同階層の全グループも一緒に開閉
+              </p>
+            </div>
+
+            <span>表示/非表示の切替</span>
+            <div>
+              <p style="line-height: 2;">
+                パッケージをクリックすると、<br>
+                AviUtl2のポップアップメニューで表示するかを切り替えられます<br>
+                <span class="annotation">※フォントメニュー等で左端にある☑のON/OFF切替です</span>
+              </p>
+            </div>
+          </div>
+          <h4>設定の削除タブの使い方</h4>
+          <div class="setting-div">
+            <span>設定の削除</span>
+            <span>削除したいパッケージをクリック</span>
+
+            <span>アンインストール済<br>スクリプトの設定を<br>まとめて削除</span>
+            <div>
+              <p>アプリケーションデータフォルダ<b style="color: var(--light-blue);"> (フォルダごと) </b>を選択してください</p>
+              <p>
+                アンインストール済みのパッケージについて自動で削除設定をONにし、
+                <span style="padding: 0 2px;border-radius: 4px;background-color: lightpink;">赤い色</span>をつけます
+              </p>
+              <p class="annotation">※対応しているのはスクリプト(Effect, Movement, Params)のみです。<br>色、フォントについては非対応ですので、ご了承ください。</p>
+            </div>
+          </div>
+
+
+          <h3>謝辞</h3>
+          <p>
+            このサイトはseilor様の<a
+              href="https://seilor0.github.io/sortoutAviUtl2ini/">sortoutAviUtl2ini</a>をもとに、Garech-mas様の<a
+              href="https://github.com/Garech-mas/jp_akey.aul2">日本語(アクセスキー付き).aul2</a>の設定も編集できるようにしたものです。<br>
+            この場を借りて、お二方に感謝いたします。また、AviUtl2の開発者であるKENくん様にも感謝いたします。
           </p>
         </div>
 
@@ -195,7 +291,8 @@
                 <toggle-button :top-is-slider="false" :is-checked="setting.previewFont.enabled"
                   @checked-toggle="value=>setting.previewFont.enabled=value" text="フォントをプレビュー"></toggle-button>
                 <p style="font-size: smaller;margin-block-start: 0.5rem;"
-                  :class="{disabled: !setting.previewFont.enabled}">デフォルトのフォント：</p>
+                  :class="{disabled: !setting.previewFont.enabled}">
+                  デフォルトのフォント：</p>
                 <select v-model="setting.previewFont.defFontFamily" :disabled="!setting.previewFont.enabled">
                   <option value="" selected>（指定なし）</option>
                   <option v-for="fontFamily in fontFamilySet">{{fontFamily}}</option>
@@ -237,112 +334,6 @@
         </div>
       </div>
     </div>
-
-    <dialog id="modal" closedby="any">
-      <header>
-        <h2>使い方 <span style="font-size: 0.7em;">({{setting.process==='home' ? 'Home' : setting.process==='labeling' ?
-            'ラベル分け' : '設定を削除'}})</span></h2>
-        <button-css-icon icon-name="icon-close" command="close" commandfor="modal"></button-css-icon>
-      </header>
-      <section>
-        <template v-if="setting.process==='home'">
-          <div class="setting-div">
-            <span>この画面について</span>
-            <span>各タブページに応じた使い方が表示されます</span>
-            <span>メニューが画面外に<br>はみ出す場合</span>
-            <span>サイトを縮小して表示してください</span>
-          </div>
-        </template>
-
-        <template v-else-if="setting.process==='labeling'">
-          <div class="setting-div">
-            <span>並び替え</span>
-            <div style="line-height: 1.75;">
-              <p>
-                パッケージ/グループを、挿入したい箇所か
-                <span class="drop-area" style="padding: 2px 12px;margin-inline: 4px;display: inline;">全体の先頭</span>にD&D
-              </p>
-              <p class="annotation"><code>ctrl+クリック/ドラッグ</code> … 複数選択</p>
-            </div>
-
-            <span>グループ追加</span>
-            <div style="display: flex;align-items: center;gap: 0.5rem;">
-              <span class="mark">
-                <span class="material-symbols-outlined">create_new_folder</span>
-                New Group
-              </span>
-              を挿入したい箇所にD&D
-            </div>
-
-            <span>グループ名の変更</span>
-            <span>グループのタイトル部分にテキスト入力</span>
-
-            <span>ソート</span>
-            <div>
-              <P style="display: flex;line-height: 2;align-items: center;">
-                グループ右上の
-                <span class="material-symbols-outlined"
-                  style="color: darkgoldenrod;font-variation-settings: &quot;wght&quot; 500;padding-inline: 0.25rem;">sort</span>
-                ボタン
-              </P>
-              <p class="annotation"><code>alt+クリック</code> … 子孫グループ内のパッケージも一緒にソート</p>
-            </div>
-
-          </div>
-
-
-          <h3>その他</h3>
-
-          <div class="setting-div">
-            <span>グループ解除</span>
-            <div>
-              <p>
-                グループ右上の<span class="icon icon-close"
-                  style="--size: 14px;color: darkgoldenrod;display: inline-block;padding: 0 0.5rem;--line-radius: 1.5px;"></span>ボタン
-              </p>
-              <p class="annotation">※内部のパッケージ/グループはその場に展開されます</p>
-            </div>
-
-            <span>グループ開閉</span>
-            <div>
-              <p>
-                グループ左上の<span style="color: darkgoldenrod"> ▼ </span>ボタン
-              </p>
-              <p class="annotation" style="line-height: 2;">
-                <code>alt+クリック</code> ... グループ内の全グループも一緒に開閉<br>
-                <code>shift+クリック</code> ... 同階層の全グループも一緒に開閉
-              </p>
-            </div>
-
-            <span>表示/非表示の切替</span>
-            <div>
-              パッケージをクリックすると、<br>
-              AviUtl2のポップアップメニューで表示するかを切り替えられます<br>
-              <span class="annotation">※フォントメニュー等で左端にある☑のON/OFF切替です</span>
-            </div>
-          </div>
-
-        </template>
-
-        <template v-else-if="setting.process==='del-dup'">
-          <div class="setting-div">
-            <span>設定の削除</span>
-            <span>削除したいパッケージをクリック</span>
-
-            <span>アンインストール済<br>スクリプトの設定を<br>まとめて削除</span>
-            <div>
-              <p>アプリケーションデータフォルダ<b style="color: var(--light-blue);"> (フォルダごと) </b>を選択してください</p>
-              <p>
-                アンインストール済みのパッケージについて自動で削除設定をONにし、<br>
-                <span style="padding: 0 2px;border-radius: 4px;background-color: lightpink;">赤い色</span>をつけます
-              </p>
-              <p class="annotation">※対応しているのはスクリプト(Effect, Movement, Params)のみです。<br>色、フォントについては非対応ですので、ご了承ください。</p>
-            </div>
-          </div>
-        </template>
-      </section>
-    </dialog>
-
   </div>
   <script type="module" src="code_vue.js"></script>
 </body>
