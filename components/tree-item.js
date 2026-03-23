@@ -13,6 +13,9 @@ export default {
     insertTarget: Array,
     insertItems: Array,
     modifierKeyFlag: Object,
+
+    accessKeyMap: Map,
+    setAccessKey: Function,
   },
 
   components: {ButtonCssIcon},
@@ -221,6 +224,17 @@ export default {
       clearModifierKeyFlag();
     }
 
+    /** 同一親配列内で同じアクセスキーを持つ兄弟がいるか判定 */
+    function isConflict(model) {
+      if (!props.accessKeyMap) return false;
+      const key = props.accessKeyMap.get(model.name)?.accessKey;
+      if (!key) return false;
+      return props.parentArray.some(sibling =>
+        sibling !== model &&
+        props.accessKeyMap.get(sibling.name)?.accessKey === key
+      );
+    }
+
 
     return {
       fileStyle,
@@ -244,6 +258,8 @@ export default {
 
       dragEnd,
       drop,
+
+      isConflict,
     }
   },
 
@@ -269,6 +285,15 @@ export default {
       <span class="material-symbols-outlined hover">drag_indicator</span>
       <div>
         <input type="text" v-model="model.name" />
+        <input v-if="accessKeyMap !== undefined"
+          type="text" maxlength="2"
+          class="access-key-input folder-key" :class="{conflict: isConflict(model)}"
+          :value="accessKeyMap?.get(model.name)?.accessKey ?? ''"
+          @click.stop
+          @keydown.stop
+          @input.stop="e => setAccessKey(model.name, e.currentTarget.value)"
+          placeholder="key"
+        />
         <span class="material-symbols-outlined" @click.stop.prevent="sortTreeData(model.children, $event.altKey)">sort</span>
         <button-css-icon icon-name="icon-close" @click.stop.prevent="ungroupFolder(model, parentArray, index)"></button-css-icon>
       </div>
@@ -290,6 +315,8 @@ export default {
         :insert-target="insertTarget"
         :insert-items="insertItems"
         :modifier-key-flag="modifierKeyFlag"
+        :access-key-map="accessKeyMap"
+        :set-access-key="setAccessKey"
         @switch-tree-data="$emit('switch-tree-data')"
       ></tree-item>
     </div>
@@ -312,6 +339,15 @@ export default {
     @drop.exact.stop="drop"
   >
     <span class="material-symbols-outlined hover">drag_indicator</span>{{model.name}}
+    <input v-if="accessKeyMap !== undefined"
+      type="text" maxlength="2"
+      class="access-key-input" :class="{conflict: isConflict(model)}"
+      :value="accessKeyMap?.get(model.name)?.accessKey ?? ''"
+      @click.stop
+      @keydown.stop
+      @input.stop="e => setAccessKey(model.name, e.currentTarget.value)"
+      placeholder="key"
+    />
   </p>
   `
 }

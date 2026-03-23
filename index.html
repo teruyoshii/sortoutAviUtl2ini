@@ -6,7 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>sort out AviUtl2.ini</title>
 
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,100..700,1,0&icon_names=arrow_left_alt,arrow_right_alt,create_new_folder,drag_indicator,sort" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,100..700,1,0&icon_names=arrow_left_alt,arrow_right_alt,create_new_folder,drag_indicator,sort" />
   <link rel="stylesheet" href="../__utility/style.css" />
   <link rel="stylesheet" href="./style.css" />
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -15,21 +16,6 @@
 <body>
   <div id="root">
 
-    <div class="sidemenu" @dragover.prevent @drop.prevent="dropInifile">
-      <h1>sort out<br>AviUtl2.ini</h1>
-
-      <button class="round blue" @click="clickNextInput">aviutl2.iniを読み込む</button>
-      <input type="file" id="iniInput" accept=".ini" style="display: none;" @change="readIniFile">
-
-      <button class="round blue" @click="saveIniFile">iniファイルを保存</button>
-      <button class="round" @click="resetPackageData">読み込み時の設定に戻す</button>
-      <button class="round" @click="clear">クリア</button>
-
-      <div>
-        <button class="link" command="show-modal" commandfor="modal">使い方</button>
-        <a href="https://github.com/seilor0/sortoutAviUtl2ini" target="_blank" rel="noopener noreferrer">GitHub</a>
-      </div>
-    </div>
 
     <div class="main-content">
       <div class="tab-ribbon">
@@ -49,12 +35,27 @@
 
       <div :data-process="setting.process">
         <div v-if="setting.process==='home'">
+          <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-block-end:1.5rem;align-items:center;">
+            <button class="round blue" @click="clickNextInput">aviutl2.iniを読み込む</button>
+            <input type="file" id="iniInput" accept=".ini" style="display: none;" @change="readIniFile">
+            <button class="round blue" @click="saveIniFile">iniファイルを保存</button>
+            <button class="round" @click="resetPackageData">読み込み時の設定に戻す</button>
+            <button class="round" @click="clear">クリア</button>
+            <hr style="border:none;border-left:1px solid gray;">
+            <button class=" round blue" @click="clickNextInput">aul2ファイルを読み込む</button>
+            <input type="file" id="aul2Input" accept=".aul2" style="display: none;" @change="readAul2File">
+            <button class="round blue" @click="saveAul2File">aul2ファイルを保存</button>
+            <hr style="border:none;border-left:1px solid gray;">
+            <button class="link" command="show-modal" commandfor="modal">使い方</button>
+            <a href="https://github.com/seilor0/sortoutAviUtl2ini" target="_blank" rel="noopener noreferrer">GitHub</a>
+          </div>
+
           以下の2つのことが手軽にできるサイトです。
           <ul>
             <li>スクリプト・フォント・色のラベル分け</li>
             <li>アンインストール済みスクリプトの設定の一括削除</li>
           </ul>
-  
+
           <h3>使い方</h3>
           <ol>
             <li>
@@ -67,17 +68,17 @@
             <li>「iniファイルを保存」ボタンから、1.と同じ<code>aviutl2.ini</code>を上書き保存する</li>
           </ol>
           <p class="annotation">
-            ※各種変更のやり方の詳細は、画面左下の「
-            <span style="color: var(--blue);cursor: pointer;" onclick="document.getElementById('modal').showModal()">使い方</span>
+            ※各種変更のやり方の詳細は、画面左上の「
+            <span style="color: var(--blue);cursor: pointer;"
+              onclick="document.getElementById('modal').showModal()">使い方</span>
             」を見てください
           </p>
-          
-  
+
           <h3>！注意！</h3>
           <p>
             予期せぬ不具合により、今までカスタマイズしたAviUtl2の設定が壊れる可能性があります。<br>
             <span class="annotation">※「3. aviutl2.iniを上書き保存」をしない限りは大丈夫です。</span><br>
-    
+
             必ず<mark>aviutl2.iniのバックアップを取ってから</mark>当サイトを使用することを推奨します。
           </p>
         </div>
@@ -92,10 +93,8 @@
 
           <div class="sub-sidemenu">
             <div class="new-mofism">
-              <div class="new-folder" draggable="true" id="newFolder"
-                @dragstart="dragStartNewFolder"
-                @dragend="clearInsertChoice"
-              >
+              <div class="new-folder" draggable="true" id="newFolder" @dragstart="dragStartNewFolder"
+                @dragend="clearInsertChoice">
                 <span class="material-symbols-outlined hover">drag_indicator</span>
                 <span class="material-symbols-outlined">create_new_folder</span>
                 New Group
@@ -107,18 +106,20 @@
                   {label:'全体の末尾へ', toAll:true, toTop:false},
                   {label:'グループの先頭へ', toAll:false, toTop:true},
                   {label:'グループの末尾へ', toAll:false, toTop:false},
-                ]" class="drop-area"
-                @dragenter="$event.currentTarget.classList.add('target')"
-                @dragleave="dragLeaveFromDropArea"
-                @dragover.prevent
-                @drop="dropToDropArea($event, dic.toAll, dic.toTop)"
-              >
+                ]" class="drop-area" @dragenter="$event.currentTarget.classList.add('target')"
+                @dragleave="dragLeaveFromDropArea" @dragover.prevent
+                @drop="dropToDropArea($event, dic.toAll, dic.toTop)">
                 {{dic.label}}
                 <span class="material-symbols-outlined">arrow_left_alt</span>
               </div>
             </div>
 
             <div class="new-mofism" style="margin-block-start: 0.5rem;">
+              <div style="display:flex;gap:0.5rem;">
+                <button class="round" @click="toggleAllGroups(true)">全て開く</button>
+                <button class="round" @click="toggleAllGroups(false)">全て閉じる</button>
+              </div>
+
               <button id="clearChoice" class="round" @click="insertItems.splice(0)">複数選択をクリア</button>
 
               <hr color="darkgray" size="1" noshade>
@@ -126,10 +127,9 @@
               <p style="display: flex;align-items: center;gap: 2px;">
                 <span class="material-symbols-outlined" style="font-size: 1.5em;">sort</span>
                 <span style="flex-grow: 1;">ソート設定：</span>
-                <toggle-button :top-is-slider="false"
-                  :is-checked="setting.labelSort.isAsc" @checked-toggle="val=>setting.labelSort.isAsc=val"
-                  text-checked="昇順" text-not-checked="降順"
-                ></toggle-button>
+                <toggle-button :top-is-slider="false" :is-checked="setting.labelSort.isAsc"
+                  @checked-toggle="val=>setting.labelSort.isAsc=val" text-checked="昇順"
+                  text-not-checked="降順"></toggle-button>
               </p>
 
               <select v-model="setting.labelSort.style">
@@ -137,48 +137,36 @@
                 <option value="folderIsBottom">グループが末尾</option>
                 <option value="folderIsMix">区別しない</option>
               </select>
-  
+
               <hr color="darkgray" size="1" noshade>
-  
+
               <div>
                 <toggle-button :top-is-slider="false" style="display: flex;justify-content: space-between;"
                   :is-checked="setting.previewFont.enabled" @checked-toggle="value=>setting.previewFont.enabled=value"
-                  text="フォントをプレビュー"
-                ></toggle-button>
+                  text="フォントをプレビュー"></toggle-button>
 
                 <p style="margin-block-start: 0.75rem;" :class="{disabled: !setting.previewFont.enabled}">フォントサイズ：</p>
-                <input type="range" min="1" max="3" step="0.1" style="width: stretch;" 
-                  v-model="setting.previewFont.fontSize" 
-                  :disabled="!setting.previewFont.enabled"
-                />
+                <input type="range" min="1" max="3" step="0.1" style="width: stretch;"
+                  v-model="setting.previewFont.fontSize" :disabled="!setting.previewFont.enabled" />
 
-                <p style="margin-block-start: 0.25rem;" :class="{disabled: !setting.previewFont.enabled}">デフォルトのフォント：</p>
+                <p style="margin-block-start: 0.25rem;" :class="{disabled: !setting.previewFont.enabled}">デフォルトのフォント：
+                </p>
                 <select v-model="setting.previewFont.defFontFamily" :disabled="!setting.previewFont.enabled">
                   <option value="" selected>（指定なし）</option>
                   <option v-for="fontFamily in fontFamilySet">{{fontFamily}}</option>
                 </select>
               </div>
-  
+
             </div>
           </div>
 
-          <div class="result" :class="resultDivClass"
-            @dragenter="dragEnterToResultDiv"
-            @dragleave="dragLeaveFromResultDiv"
-            @dragover.stop.prevent
-            @drop.self="dropToResultDiv"
-          >
-            <tree-item v-for="(model,index) in treeDataMap.get(setting.type)"
-              :model="model"
-              :setting="setting"
-              :parent-array="treeDataMap.get(setting.type)" 
-              :index="index"
-              :file-click-func="toggleHide" 
-              :insert-target="insertTarget"
-              :insert-items="insertItems"
-              :modifier-key-flag="modifierKeyFlag"
-              @switch-tree-data="orderTreeDatas(treeDataMap.get(setting.type))"
-            ></tree-item>
+          <div class="result" :class="resultDivClass" @dragenter="dragEnterToResultDiv"
+            @dragleave="dragLeaveFromResultDiv" @dragover.stop.prevent @drop.self="dropToResultDiv">
+            <tree-item v-for="(model,index) in treeDataMap.get(setting.type)" :model="model" :setting="setting"
+              :parent-array="treeDataMap.get(setting.type)" :index="index" :file-click-func="toggleHide"
+              :insert-target="insertTarget" :insert-items="insertItems" :modifier-key-flag="modifierKeyFlag"
+              :access-key-map="accessKeyMap" :set-access-key="setAccessKey"
+              @switch-tree-data="orderTreeDatas(treeDataMap.get(setting.type))"></tree-item>
           </div>
         </div>
 
@@ -188,7 +176,7 @@
               <input type="radio" :value="name" v-model="setting.type" />
               {{name}}
             </label>
-            
+
             <div class="new-mofism" style="margin-block-start: 1rem;padding: 1rem;">
               <p>
                 アンインストール済スクリプトの<br>
@@ -198,16 +186,16 @@
                 アプリケーション<br>
                 データフォルダを選択
               </button>
-              <input type="file" id="scriptsInput" style="display: none;" @change="readInstalledPackage" multiple webkitdirectory />
+              <input type="file" id="scriptsInput" style="display: none;" @change="readInstalledPackage" multiple
+                webkitdirectory />
 
               <hr style="margin-block: 0.75rem;">
-  
+
               <div>
-                <toggle-button :top-is-slider="false"
-                  :is-checked="setting.previewFont.enabled" @checked-toggle="value=>setting.previewFont.enabled=value"
-                  text="フォントをプレビュー"
-                ></toggle-button>
-                <p style="font-size: smaller;margin-block-start: 0.5rem;" :class="{disabled: !setting.previewFont.enabled}">デフォルトのフォント：</p>
+                <toggle-button :top-is-slider="false" :is-checked="setting.previewFont.enabled"
+                  @checked-toggle="value=>setting.previewFont.enabled=value" text="フォントをプレビュー"></toggle-button>
+                <p style="font-size: smaller;margin-block-start: 0.5rem;"
+                  :class="{disabled: !setting.previewFont.enabled}">デフォルトのフォント：</p>
                 <select v-model="setting.previewFont.defFontFamily" :disabled="!setting.previewFont.enabled">
                   <option value="" selected>（指定なし）</option>
                   <option v-for="fontFamily in fontFamilySet">{{fontFamily}}</option>
@@ -222,7 +210,9 @@
                 <tr>
                   <th v-for="dic in delDupSortType">
                     <label>
-                      <input type="radio" name="del-dup-sort-style" :value="dic.value" v-model="setting.delDupSort.style" @click="dic.isAsc=!dic.isAsc;setting.delDupSort.isAsc = dic.isAsc;"/>
+                      <input type="radio" name="del-dup-sort-style" :value="dic.value"
+                        v-model="setting.delDupSort.style"
+                        @click="dic.isAsc=!dic.isAsc;setting.delDupSort.isAsc = dic.isAsc;" />
                       {{dic.label}}
                       <span style="font-size: smaller;padding-inline-start: 8px;">{{dic.isAsc ? '▼' : '▲'}}</span>
                     </label>
@@ -231,11 +221,14 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="dic in delDupData" :class="{uninstalled:dic.uninstalled, 'to-delete':dic.toDelete}" @click="dic.toDelete=!dic.toDelete">
-                  <td><input type="checkbox" v-model="dic.toDelete"/></td>
+                <tr v-for="dic in delDupData" :class="{uninstalled:dic.uninstalled, 'to-delete':dic.toDelete}"
+                  @click="dic.toDelete=!dic.toDelete">
+                  <td><input type="checkbox" v-model="dic.toDelete" /></td>
                   <td>{{dic.props.order}}</td>
                   <td class="see-through">({{dic.initOrder}})</td>
-                  <td :style="setting.previewFont.enabled && setting.type==='Font' ? [dic.fontStyle, {fontFamily : [dic.fontStyle.fontFamily, setting.previewFont.defFontFamily].filter(Boolean).join(',')}] : null">{{dic.name}}</td>
+                  <td
+                    :style="setting.previewFont.enabled && setting.type==='Font' ? [dic.fontStyle, {fontFamily : [dic.fontStyle.fontFamily, setting.previewFont.defFontFamily].filter(Boolean).join(',')}] : null">
+                    {{dic.name}}</td>
                   <td class="see-through">{{dic.props}}</td>
                 </tr>
               </tbody>
@@ -247,7 +240,8 @@
 
     <dialog id="modal" closedby="any">
       <header>
-        <h2>使い方 <span style="font-size: 0.7em;">({{setting.process==='home' ? 'Home' : setting.process==='labeling' ? 'ラベル分け' : '設定を削除'}})</span></h2>
+        <h2>使い方 <span style="font-size: 0.7em;">({{setting.process==='home' ? 'Home' : setting.process==='labeling' ?
+            'ラベル分け' : '設定を削除'}})</span></h2>
         <button-css-icon icon-name="icon-close" command="close" commandfor="modal"></button-css-icon>
       </header>
       <section>
@@ -270,7 +264,7 @@
               </p>
               <p class="annotation"><code>ctrl+クリック/ドラッグ</code> … 複数選択</p>
             </div>
-            
+
             <span>グループ追加</span>
             <div style="display: flex;align-items: center;gap: 0.5rem;">
               <span class="mark">
@@ -279,30 +273,32 @@
               </span>
               を挿入したい箇所にD&D
             </div>
-            
+
             <span>グループ名の変更</span>
             <span>グループのタイトル部分にテキスト入力</span>
-            
+
             <span>ソート</span>
             <div>
               <P style="display: flex;line-height: 2;align-items: center;">
                 グループ右上の
-                <span class="material-symbols-outlined" style="color: darkgoldenrod;font-variation-settings: &quot;wght&quot; 500;padding-inline: 0.25rem;">sort</span>
+                <span class="material-symbols-outlined"
+                  style="color: darkgoldenrod;font-variation-settings: &quot;wght&quot; 500;padding-inline: 0.25rem;">sort</span>
                 ボタン
               </P>
               <p class="annotation"><code>alt+クリック</code> … 子孫グループ内のパッケージも一緒にソート</p>
             </div>
-            
+
           </div>
-          
-          
+
+
           <h3>その他</h3>
-          
+
           <div class="setting-div">
             <span>グループ解除</span>
             <div>
               <p>
-                グループ右上の<span class="icon icon-close" style="--size: 14px;color: darkgoldenrod;display: inline-block;padding: 0 0.5rem;--line-radius: 1.5px;"></span>ボタン
+                グループ右上の<span class="icon icon-close"
+                  style="--size: 14px;color: darkgoldenrod;display: inline-block;padding: 0 0.5rem;--line-radius: 1.5px;"></span>ボタン
               </p>
               <p class="annotation">※内部のパッケージ/グループはその場に展開されます</p>
             </div>
@@ -317,7 +313,7 @@
                 <code>shift+クリック</code> ... 同階層の全グループも一緒に開閉
               </p>
             </div>
-  
+
             <span>表示/非表示の切替</span>
             <div>
               パッケージをクリックすると、<br>
@@ -325,11 +321,11 @@
               <span class="annotation">※フォントメニュー等で左端にある☑のON/OFF切替です</span>
             </div>
           </div>
-          
+
         </template>
 
         <template v-else-if="setting.process==='del-dup'">
-          <div class="setting-div">            
+          <div class="setting-div">
             <span>設定の削除</span>
             <span>削除したいパッケージをクリック</span>
 

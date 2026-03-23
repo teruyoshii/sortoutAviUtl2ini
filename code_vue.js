@@ -102,7 +102,148 @@ const rootApp = createApp({
     const fontFamilySet = ref(new Set());
 
 
-    
+    // -----------------------------------------------------------------------
+    // .aul2 アクセスキー管理
+    // -----------------------------------------------------------------------
+
+    /**
+     * .aul2 の各行をそのまま保持する配列
+     * { text: string, originalName: string|null }
+     */
+    const aul2Lines = ref([]);
+
+    /**
+     * Map<originalName, { displayName, accessKey, lineIndex }>
+     * lineIndex: aul2Lines 内の行インデックス（null = .aul2 に未定義）
+     */
+    const accessKeyMap = ref(new Map());
+
+    async function readAul2File(e) {
+      const file = e.currentTarget.files[0];
+      if (!file) return;
+      e.currentTarget.value = null;
+
+      const text = await file.text();
+      const lines = text.split(/\r\n|\n/);
+
+      const newAul2Lines = [];
+      const newAccessKeyMap = new Map();
+
+      lines.forEach(line => {
+        // コメント・空行・セクションヘッダはそのまま
+        if (line.startsWith(';') || line.trim() === '' || line.startsWith('[')) {
+          newAul2Lines.push({ text: line, originalName: null });
+          return;
+        }
+
+        const eqIdx = line.indexOf('=');
+        if (eqIdx === -1) {
+          newAul2Lines.push({ text: line, originalName: null });
+          return;
+        }
+
+        const originalName = line.slice(0, eqIdx);
+        const valuePart   = line.slice(eqIdx + 1);
+
+        // 末尾の (&X) を探す
+        const keyMatch = valuePart.match(/\((&[^)]+)\)\s*$/);
+        const accessKey   = keyMatch ? keyMatch[1].slice(1) : ''; // '&V' → 'V'
+        const displayName = keyMatch
+          ? valuePart.slice(0, valuePart.lastIndexOf('(' + keyMatch[1] + ')')).trimEnd()
+          : valuePart;
+
+        const lineIndex = newAul2Lines.length;
+        newAul2Lines.push({ text: line, originalName });
+        newAccessKeyMap.set(originalName, { displayName, accessKey, lineIndex });
+      });
+
+      aul2Lines.value = newAul2Lines;
+      accessKeyMap.value = newAccessKeyMap;
+    }
+
+    function dropAul2File(e) {
+      const file = e.dataTransfer?.files[0];
+      if (!file?.name.endsWith('.aul2')) return;
+      document.getElementById('aul2Input').files = e.dataTransfer.files;
+      document.getElementById('aul2Input').dispatchEvent(new Event('change'));
+    }
+
+    function saveAul2File() {
+      // 既存行を最新キーで再構築
+      const outputLines = aul2Lines.value.map(lineObj => {
+        if (!lineObj.originalName) return lineObj.text;
+        const entry = accessKeyMap.value.get(lineObj.originalName);
+        if (!entry) return lineObj.text;
+        const { displayName, accessKey } = entry;
+        return accessKey
+          ? `${lineObj.originalName}=${displayName}(&${accessKey})`
+          : `${lineObj.originalName}=${displayName}`;
+      });
+
+      // 未定義 & キー設定済みパッケージを適切な位置に追記
+      let spliceOffset = 0;
+      accessKeyMap.value.forEach((entry, originalName) => {
+        if (entry.lineIndex !== null) return; // 既存行 → スキップ
+        if (!entry.accessKey) return;          // キー未設定 → スキップ
+
+        const newLine = `${originalName}=${entry.displayName}(&${entry.accessKey})`;
+
+        // 同じグループに属する定義済み行の最後を探す
+        let insertAfterIdx = -1;
+        let inserted = false;
+
+        packageDataMap.value.forEach((pkgArr) => {
+          if (inserted) return;
+          const pkg = pkgArr.find(p => p.name === originalName);
+          if (!pkg) return;
+
+          const labelStr = JSON.stringify(pkg.props.label);
+          const sameGroupNames = new Set(
+            pkgArr
+              .filter(p => JSON.stringify(p.props.label) === labelStr)
+              .map(p => p.name)
+          );
+
+          aul2Lines.value.forEach((lineObj, idx) => {
+            if (lineObj.originalName && sameGroupNames.has(lineObj.originalName))
+              insertAfterIdx = idx;
+          });
+
+          if (insertAfterIdx !== -1) {
+            // 既に追記した行数分オフセットを加算してインデックスずれを補正
+            outputLines.splice(insertAfterIdx + 1 + spliceOffset, 0, newLine);
+            spliceOffset++;
+            inserted = true;
+          }
+        });
+
+        if (!inserted) outputLines.push(newLine);
+      });
+
+      const blob = new Blob([outputLines.join('\r\n')], { type: 'text/plain' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'accesskey.aul2';
+      link.click();
+    }
+
+    /** パッケージのアクセスキーをセット（入力ボックスから呼ばれる） */
+    function setAccessKey(originalName, rawVal) {
+      const key = rawVal ? rawVal.toUpperCase().slice(-1) : '';
+      const existing = accessKeyMap.value.get(originalName);
+      if (existing) {
+        existing.accessKey = key;
+      } else {
+        accessKeyMap.value.set(originalName, {
+          displayName: originalName,
+          accessKey: key,
+          lineIndex: null,
+        });
+      }
+      accessKeyMap.value = new Map(accessKeyMap.value); // reactivity
+    }
+
+
     async function readIniFile(e) {
       const file = e.currentTarget.files[0];
       if (!file) return;
@@ -350,6 +491,18 @@ const rootApp = createApp({
       return order;
     }
     
+    /** 現在のタイプのツリー内にある全フォルダを一括で開閉する */
+    function toggleAllGroups (open) {
+      function walk (arr) {
+        arr.forEach(item => {
+          if (item.children) {
+            item.isOpen = open;
+            walk(item.children);
+          }
+        });
+      }
+      walk(treeDataMap.value.get(setting.value.type) ?? []);
+    }
 
 
     const insertTarget = ref([]); // {parent, index}
@@ -504,6 +657,8 @@ const rootApp = createApp({
       toggleHide,
       orderTreeDatas,
 
+      toggleAllGroups,
+
       insertTarget,
       insertItems,
       modifierKeyFlag,
@@ -517,6 +672,12 @@ const rootApp = createApp({
       dragEnterToResultDiv,
       dragLeaveFromResultDiv,
       dropToResultDiv,
+
+      accessKeyMap,
+      readAul2File,
+      saveAul2File,
+      dropAul2File,
+      setAccessKey,
     }
   }
 });
