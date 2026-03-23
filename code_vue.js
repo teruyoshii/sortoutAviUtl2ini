@@ -243,6 +243,22 @@ const rootApp = createApp({
       accessKeyMap.value = new Map(accessKeyMap.value); // reactivity
     }
 
+    /** パッケージ・グループの表示名をセット（Alt+クリック編集から呼ばれる） */
+    function setDisplayName(originalName, newDisplayName) {
+      const trimmed = newDisplayName.trim();
+      const existing = accessKeyMap.value.get(originalName);
+      if (existing) {
+        existing.displayName = trimmed || originalName;
+      } else {
+        accessKeyMap.value.set(originalName, {
+          displayName: trimmed || originalName,
+          accessKey: '',
+          lineIndex: null,
+        });
+      }
+      accessKeyMap.value = new Map(accessKeyMap.value); // reactivity
+    }
+
 
     async function readIniFile(e) {
       const file = e.currentTarget.files[0];
@@ -678,6 +694,7 @@ const rootApp = createApp({
       saveAul2File,
       dropAul2File,
       setAccessKey,
+      setDisplayName,
     }
   }
 });

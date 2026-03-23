@@ -211,6 +211,13 @@
   input[type=checkbox] {
     cursor: pointer;
   }
+
+  .display-name-hint {
+    font-size: 0.8em;
+    color: steelblue;
+    margin-inline-start: 0.25em;
+    pointer-events: none;
+  }
 }
 
 /* ---------------------- */
@@ -557,6 +564,22 @@
     position: relative;
     cursor: pointer;
 
+    .file-name-wrap {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .file-name {
+      &:hover {
+        text-decoration: underline dotted rgba(0, 0, 0, 0.3);
+      }
+
+      &.edited {
+        text-decoration: underline dotted steelblue;
+        text-underline-offset: 3px;
+      }
+    }
+
     .access-key-input {
       margin-inline-start: 0.75rem;
       width: 4.4ch;
@@ -570,6 +593,14 @@
       cursor: text;
       font-family: monospace;
       vertical-align: middle;
+
+      &.display-name-input {
+        width: 12ch;
+        text-align: start;
+        text-transform: none;
+        font-family: inherit;
+        border-color: steelblue;
+      }
 
       &.conflict {
         border-color: #e03030;
@@ -708,6 +739,14 @@
       cursor: text;
       font-family: monospace;
       vertical-align: middle;
+
+      &.display-name-input {
+        width: 12ch;
+        text-align: start;
+        text-transform: none;
+        font-family: inherit;
+        border-color: steelblue;
+      }
 
       &.conflict {
         border-color: #e03030;

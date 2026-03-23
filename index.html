@@ -37,7 +37,7 @@
         <div v-if="setting.process==='home'">
           <div style="margin-block-end:1.5rem;">
             <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-block-end:0.5rem;align-items:center;">
-              <button class="round blue" @click="clickNextInput">iniファイルを読み込む</button>
+              <button class="round blue" @click="clickNextInput">aviutl2.iniを読み込む</button>
               <input type="file" id="iniInput" accept=".ini" style="display: none;" @change="readIniFile">
               <button class="round blue" @click="saveIniFile">iniファイルを保存</button>
             </div>
@@ -152,6 +152,14 @@
                 <span class="annotation">※フォントメニュー等で左端にある☑のON/OFF切替です</span>
               </p>
             </div>
+            <span>表示名の変更</span>
+            <div>
+              <p style="line-height: 2;">
+                パッケージをAltキーを押しながらクリックすると、表示名を変更できます。<br>
+                グループの表示名を変更したい場合は、グループ名をダブルクリックしてください。<br>
+                表示名の変更先は、 [変更前]<span class="display-name-hint"> → [変更後]</span> のように表示されます。
+              </p>
+            </div>
           </div>
           <h4>設定の削除タブの使い方</h4>
           <div class="setting-div">
@@ -261,7 +269,7 @@
             <tree-item v-for="(model,index) in treeDataMap.get(setting.type)" :model="model" :setting="setting"
               :parent-array="treeDataMap.get(setting.type)" :index="index" :file-click-func="toggleHide"
               :insert-target="insertTarget" :insert-items="insertItems" :modifier-key-flag="modifierKeyFlag"
-              :access-key-map="accessKeyMap" :set-access-key="setAccessKey"
+              :access-key-map="accessKeyMap" :set-access-key="setAccessKey" :set-display-name="setDisplayName"
               @switch-tree-data="orderTreeDatas(treeDataMap.get(setting.type))"></tree-item>
           </div>
         </div>

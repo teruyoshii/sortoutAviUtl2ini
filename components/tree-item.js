@@ -16,6 +16,7 @@ export default {
 
     accessKeyMap: Map,
     setAccessKey: Function,
+    setDisplayName: Function,
   },
 
   components: {ButtonCssIcon},
@@ -239,6 +240,34 @@ export default {
       );
     }
 
+    /** 表示名編集中かどうか */
+    const editingDisplayName = Vue.ref(false);
+
+    function startEditDisplayName(e) {
+      if (!props.setDisplayName) return;
+      editingDisplayName.value = true;
+      Vue.nextTick(() => {
+        const container = e.currentTarget.closest('summary, .file') ?? e.currentTarget.parentElement;
+        const el = container?.querySelector('.display-name-input');
+        if (el) { el.focus(); el.select(); }
+      });
+    }
+
+    function commitDisplayName(e) {
+      if (!props.setDisplayName) return;
+      props.setDisplayName(props.model.name, e.currentTarget.value);
+      editingDisplayName.value = false;
+    }
+
+    function cancelEditDisplayName() {
+      editingDisplayName.value = false;
+    }
+
+    /** 表示名を取得（未設定時はoriginalName） */
+    function getDisplayName(model) {
+      return props.accessKeyMap?.get(model.name)?.displayName ?? model.name;
+    }
+
 
     return {
       fileStyle,
@@ -264,6 +293,11 @@ export default {
       drop,
 
       isConflict,
+      editingDisplayName,
+      startEditDisplayName,
+      commitDisplayName,
+      cancelEditDisplayName,
+      getDisplayName,
     }
   },
 
@@ -289,8 +323,19 @@ export default {
       <span class="material-symbols-outlined hover">drag_indicator</span>
       <div>
         <span class="folder-name-wrap">
-          <input type="text" v-model="model.name" />
-          <input v-if="accessKeyMap !== undefined"
+          <input type="text" v-model="model.name" @dblclick.stop="startEditDisplayName" />
+          <input v-if="accessKeyMap !== undefined && editingDisplayName"
+            type="text"
+            class="access-key-input display-name-input folder-key"
+            :value="accessKeyMap?.get(model.name)?.displayName ?? model.name"
+            @click.stop
+            @keydown.stop
+            @keydown.enter.stop="commitDisplayName"
+            @keydown.esc.stop="cancelEditDisplayName"
+            @blur="commitDisplayName"
+            placeholder="表示名"
+          />
+          <input v-else-if="accessKeyMap !== undefined"
             type="text" maxlength="2"
             class="access-key-input folder-key" :class="{conflict: isConflict(model)}"
             :value="accessKeyMap?.get(model.name)?.accessKey ?? ''"
@@ -323,6 +368,7 @@ export default {
         :modifier-key-flag="modifierKeyFlag"
         :access-key-map="accessKeyMap"
         :set-access-key="setAccessKey"
+        :set-display-name="setDisplayName"
         @switch-tree-data="$emit('switch-tree-data')"
       ></tree-item>
     </div>
@@ -330,7 +376,6 @@ export default {
   
   <p v-else v-if="!model.toDelete" draggable="true"
     class="file" :class="{hide: model.props.hide, ...treeItemClass}" :style="fileStyle"
-    @click.exact="fileClickFunc(model)"
     @click.ctrl.stop="toggleInsertModels"
     
     @dragstart.exact.stop="addInsertModels"
@@ -344,16 +389,35 @@ export default {
     @dragover.prevent
     @drop.exact.stop="drop"
   >
-    <span class="material-symbols-outlined hover">drag_indicator</span>{{model.name}}
-    <input v-if="accessKeyMap !== undefined"
-      type="text" maxlength="2"
-      class="access-key-input" :class="{conflict: isConflict(model)}"
-      :value="accessKeyMap?.get(model.name)?.accessKey ?? ''"
-      @click.stop
-      @keydown.stop
-      @input.stop="e => setAccessKey(model.name, e.currentTarget.value)"
-      placeholder="key"
-    />
+    <span class="material-symbols-outlined hover">drag_indicator</span>
+    <span class="file-name-wrap">
+      <span class="file-name"
+        :class="{edited: accessKeyMap && accessKeyMap.get(model.name)?.displayName && accessKeyMap.get(model.name)?.displayName !== model.name}"
+        @click.alt.exact.stop.prevent="startEditDisplayName"
+        @click.exact="fileClickFunc(model)"
+      >{{model.name}}<template v-if="accessKeyMap && accessKeyMap.get(model.name)?.displayName && accessKeyMap.get(model.name)?.displayName !== model.name"
+        ><span class="display-name-hint"> → {{accessKeyMap.get(model.name).displayName}}</span></template></span>
+      <input v-if="editingDisplayName"
+        type="text"
+        class="access-key-input display-name-input"
+        :value="accessKeyMap?.get(model.name)?.displayName ?? model.name"
+        @click.stop
+        @keydown.stop
+        @keydown.enter.stop="commitDisplayName"
+        @keydown.esc.stop="cancelEditDisplayName"
+        @blur="commitDisplayName"
+        placeholder="表示名"
+      />
+      <input v-else-if="accessKeyMap !== undefined"
+        type="text" maxlength="2"
+        class="access-key-input" :class="{conflict: isConflict(model)}"
+        :value="accessKeyMap?.get(model.name)?.accessKey ?? ''"
+        @click.stop
+        @keydown.stop
+        @input.stop="e => setAccessKey(model.name, e.currentTarget.value)"
+        placeholder="key"
+      />
+    </span>
   </p>
   `
 }
